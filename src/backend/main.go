@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	_ "net/http"
 	"os"
 
@@ -40,10 +39,4 @@ func get_port() string {
         port = ":" + val
     }
     return port
-}
-
-func checkError(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }

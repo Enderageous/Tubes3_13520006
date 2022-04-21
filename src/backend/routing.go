@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"io/ioutil"
 	"github.com/gin-gonic/gin"
 )
@@ -157,14 +158,20 @@ func DeleteDiseaseById(c *gin.Context) {
 }
 
 func DeletePredictionById(c *gin.Context) {
-		// Get the id parameter from the URL.
-		id := c.Params.ByName("id")
-		// Delete the prediction from the database.
-		_, err := db.Exec("DELETE FROM prediction WHERE id = ?", id)
-		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
-			return
-		}
-		// Return the deleted prediction.
-		c.JSON(200, gin.H{"id": id})
+	// Get the id parameter from the URL.
+	id := c.Params.ByName("id")
+	// Delete the prediction from the database.
+	_, err := db.Exec("DELETE FROM prediction WHERE id = ?", id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
 	}
+	// Return the deleted prediction.
+	c.JSON(200, gin.H{"id": id})
+}
+
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
