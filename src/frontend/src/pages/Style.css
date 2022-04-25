@@ -1,0 +1,155 @@
+.threecolumn {
+  float: right;
+  width: 33.33%;
+  text-align: center;
+}
+body {
+  background-color: #b4e197;
+}
+.twocolumn {
+  float: left;
+  width: 50%;
+  text-align: center;
+}
+
+.onecolumn {
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.searchInput {
+  width: 30%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  margin-left: 35%;
+  transition: width 0.4s ease-in-out;
+}
+
+.twoInput {
+  width: 50%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  padding: 5px 5px 5px 5px;
+  transition: width 0.4s ease-in-out;
+}
+
+.threeInput {
+  width: 75%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  padding: 5px 5px 5px 5px;
+  transition: width 0.4s ease-in-out;
+}
+
+p {
+  font-size: 25px;
+}
+
+.uploadButtonPenyakit {
+  width: 50%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  padding: 5px 5px 5px 5px;
+  color: rgb(99, 96, 96);
+}
+
+.uploadButtonDNA {
+  width: 75%;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  padding: 5px 5px 5px 5px;
+  color: rgb(99, 96, 96);
+  margin-bottom: 10%;
+}
+
+.uploadButtonPenyakit:hover {
+  background-color: #ccc;
+}
+
+.uploadButtonDNA:hover {
+  background-color: #ccc;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.subtitle {
+  text-align: center;
+  margin-top: 5%;
+  margin-bottom: 2%;
+}
+
+.tambahPenyakit {
+  position: absolute;
+  margin: 0 20% 0 20%;
+  width: 60%;
+  height: 50%;
+  border: 3px solid #83bd75;
+  border-radius: 50px;
+  padding-top: 5%;
+  background-color: #e9efc0;
+}
+.tesDNA {
+  position: absolute;
+  margin: 0 20% 0 20%;
+  width: 60%;
+  height: 65%;
+  border: 3px solid #83bd75;
+  border-radius: 50px;
+  padding-top: 5%;
+  background-color: #e9efc0;
+}
+
+.submitButton {
+  background-color: #4e944f;
+  color: white;
+  font-size: 25px;
+  width: 30%;
+  padding: 10px 40px;
+  border-radius: 5px;
+  margin-top: 5%;
+  margin-left: 35%;
+  cursor: pointer;
+  float: left;
+  text-align: center;
+}
+
+.submitButton1 {
+  background-color: #4e944f;
+  color: white;
+  font-size: 25px;
+  width: 75%;
+  padding: 10px 40px;
+  border-radius: 5px;
+  margin-top: 5%;
+  margin-left: 12.5%;
+  cursor: pointer;
+  float: left;
+  text-align: center;
+}
+
+.submitButton:hover {
+  background-color: #446a46;
+}
+
+.submitButton1:hover {
+  background-color: #446a46;
+}
