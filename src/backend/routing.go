@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +10,7 @@ func TestAPI(c *gin.Context) {
 
 func GetDisease(c *gin.Context) {
 	// Get all diseases from the database.
-	rows, err := db.Query("SELECT id, name, dna_sequence FROM disease")
+	rows, err := db.Query("SELECT disease_id, disease_name, dna_sequence FROM disease")
 	getError(c, err)
 	defer rows.Close()
 	// Iterate through the diseases and create a JSON array.
@@ -31,7 +30,7 @@ func GetDiseaseById(c *gin.Context) {
 	id := c.Params.ByName("id")
 	// Get the disease from the database.
 	var disease Disease
-	err := db.QueryRow("SELECT id, name, dna_sequence FROM disease WHERE id = ?", id).Scan(&disease.ID, &disease.Name, &disease.DNASequence)
+	err := db.QueryRow("SELECT disease_id, disease_name, dna_sequence FROM disease WHERE disease_id = ?", id).Scan(&disease.ID, &disease.Name, &disease.DNASequence)
 	getError(c, err)
 	// Return the disease.
 	c.JSON(200, disease)
@@ -39,14 +38,14 @@ func GetDiseaseById(c *gin.Context) {
 
 func GetPrediction(c *gin.Context) {
 	// Get all predictions from the database.
-	rows, err := db.Query("SELECT id, date, patient_name, disease_id, disease_name, result, accuracy FROM prediction_view")
+	rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, dna_sequence, disease_id, disease_name, result, accuracy FROM prediction_view")
 	getError(c, err)
 	defer rows.Close()
 	// Iterate through the predictions and create a JSON array.
 	var predictions []Prediction
 	for rows.Next() {
 		var prediction Prediction
-		err := rows.Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+		err := rows.Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
 		getError(c, err)
 		predictions = append(predictions, prediction)
 	}
@@ -59,7 +58,7 @@ func GetPredictionById(c *gin.Context) {
 	id := c.Params.ByName("id")
 	// Get the prediction from the database.
 	var prediction Prediction
-	err := db.QueryRow("SELECT id, date, patient_name, disease_id, disease_name, result, accuracy FROM prediction_view WHERE id = ?", id).Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+	err := db.QueryRow("SELECT prediction_id, prediction_date, patient_name, dna_sequence, disease_id, disease_name, result, accuracy FROM prediction_view WHERE prediction_id = ?", id).Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
 	getError(c, err)
 	// Return the prediction.
 	c.JSON(200, prediction)
@@ -70,20 +69,17 @@ func InsertDisease(c *gin.Context) {
 	var newDisease Disease
 	err := c.Bind(&newDisease)
 	getError(c, err)
-	file, err := c.FormFile("file")
+	file, err := c.FormFile("dna_file")
 	logError(err)
-	// Read string from file
-	fileString, err := file.Open()
+
+	newDisease.DNASequence, err = readFile(file)
 	logError(err)
-	defer fileString.Close()
-	dnaSequenceBytes, err := ioutil.ReadAll(fileString)
-	logError(err)
-	newDisease.DNASequence = string(dnaSequenceBytes)
+	
 	// Capture the disease name and dna sequence.
 	diseaseName := newDisease.Name
 	dnaSequence := newDisease.DNASequence
 	// Insert the disease into the database.
-	_, err = db.Exec("INSERT INTO disease (name, dna_sequence) VALUES (?, ?)", diseaseName, dnaSequence)
+	_, err = db.Exec("INSERT INTO disease (disease_name, dna_sequence) VALUES (?, ?)", diseaseName, dnaSequence)
 	getError(c, err)
 	// Return the disease.
 	c.JSON(200, gin.H{"disease_name": diseaseName, "dna_sequence": dnaSequence})
@@ -94,24 +90,20 @@ func InsertPrediction(c *gin.Context) {
 	var newPrediction Prediction
 	err := c.Bind(&newPrediction)
 	getError(c, err)
-
-	file, err := c.FormFile("file")
+	file, err := c.FormFile("dna_file")
 	logError(err)
-	// Read string from file
-	fileString, err := file.Open()
+	
+	newPrediction.DNASequence, err = readFile(file)
 	logError(err)
-	defer fileString.Close()
-	dnaSequenceBytes, err := ioutil.ReadAll(fileString)
-	logError(err)
-	newPrediction.DNASequence = string(dnaSequenceBytes)
 
 	// Capture the prediction date, patient name, disease name, result and accuracy.
 	patientName := newPrediction.PatientName
 	diseaseId := newPrediction.DiseaseId
+	dnaSequence := newPrediction.DNASequence
 	result := 1   // TODO: ganti sesuai algo strmatch
 	accuracy := 1 // TODO: ganti sesuai algo strmatch
 	// Insert the prediction into the database.
-	_, err = db.Exec("INSERT INTO prediction (date, patient_name, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?)", patientName, diseaseId, result, accuracy)
+	_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
 	getError(c, err)
 	// Return the prediction.
 	c.JSON(200, gin.H{"patient_name": patientName, "disease_id": diseaseId, "result": result, "accuracy": accuracy})
@@ -121,7 +113,7 @@ func DeleteDiseaseById(c *gin.Context) {
 	// Get the id parameter from the URL.
 	id := c.Params.ByName("id")
 	// Delete the disease from the database.
-	_, err := db.Exec("DELETE FROM disease WHERE id = ?", id)
+	_, err := db.Exec("DELETE FROM disease WHERE disease_id = ?", id)
 	getError(c, err)
 	// Return the deleted disease.
 	c.JSON(200, gin.H{"id": id})
@@ -131,7 +123,7 @@ func DeletePredictionById(c *gin.Context) {
 	// Get the id parameter from the URL.
 	id := c.Params.ByName("id")
 	// Delete the prediction from the database.
-	_, err := db.Exec("DELETE FROM prediction WHERE id = ?", id)
+	_, err := db.Exec("DELETE FROM prediction WHERE prediction_id = ?", id)
 	getError(c, err)
 	// Return the deleted prediction.
 	c.JSON(200, gin.H{"id": id})
