@@ -19,14 +19,13 @@ func main() {
 
 	r.GET("/api/disease", GetDisease)
 	r.GET("/api/disease/:id", GetDiseaseById)
-	// Menerima string "disease_name" dan file "file" berisi dna_sequence dari client
+	// Menerima string "disease_name" dan file "dna_sequence_file"
 	r.POST("/api/disease", InsertDisease)
 	r.DELETE("/api/disease/:id", DeleteDiseaseById)
 
 	r.GET("/api/prediction", GetPrediction)
 	r.GET("/api/prediction/:id", GetPredictionById)
-	// Menerima string "patient_name", file "file" berisi dna_sequence,
-	// dan prediksi penyakit "disease_id" dari client (disease_id pasti ada)
+	// Menerima string "patient_name", file "dna_sequence_file", dan "disease_id"	
 	r.POST("/api/prediction", InsertPrediction)
 	r.DELETE("/api/prediction/:id", DeletePredictionById)
 

@@ -27,8 +27,8 @@ func InitializeDB() {
 		AllowNativePasswords: true,
 	}
 	db, err = sql.Open("mysql", cfg.FormatDSN())
-	checkError(err)
+	logError(err)
 	pingErr := db.Ping()
-	checkError(pingErr)
+	logError(pingErr)
 	fmt.Println("Connected to database")
 }
