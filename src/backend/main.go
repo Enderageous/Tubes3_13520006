@@ -37,9 +37,9 @@ func main() {
 func get_port() string {
 	// uncomment for local testing
 	// port := ":8080"
-    port := ":" + os.Getenv("PORT")
-    if port == "" {
-		port = ":8080"
+	port := ":" + os.Getenv("PORT")
+    if port == ":" {
+		return ":8080"
     }
-    return port
+	return port
 }
