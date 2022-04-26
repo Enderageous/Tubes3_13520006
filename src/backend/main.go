@@ -35,9 +35,11 @@ func main() {
 }
 
 func get_port() string {
-    port := ":8080"
-    if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
-        port = ":" + val
-    }
+	// uncomment for local testing
+	// port := ":8080"
+    port := ":" + os.Getenv("PORT")
+    // if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
+    //     port = ":" + val
+    // }
     return port
 }
