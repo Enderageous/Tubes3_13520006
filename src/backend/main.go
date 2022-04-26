@@ -15,6 +15,8 @@ func main() {
 
 	// Create a new router
 	r := gin.Default()
+
+	r.GET("/", TestAPI)
 	r.GET("/api", TestAPI)
 
 	r.GET("/api/disease", GetDisease)
