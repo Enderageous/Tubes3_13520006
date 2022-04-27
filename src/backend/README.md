@@ -3,25 +3,29 @@
 ## Cara menjalankan di localhost
 
 1. Pastikan sudah menginstal Golang.
-2. Copy file `.env.example` di folder `/src` ke file baru `.env` di folder yang sama.
-3. Jika sudah ada, isi `.env` dengan nilai yang sesuai.
-4. Jalankan perintah berikut. 
+2. Jalankan perintah berikut. 
 	```
 	go run .
 	```
 	Perintah ini akan menjalankan backend API dari `localhost:8080`.
-5. Jika sudah berhasil, akan muncul route apa saja yang dapat digunakan
+5. Jika sudah berhasil, API dapat digunakan
 
-## Daftar route
+## Cara menjalankan dari remote
 
-	GET		/api
+Jalankan API dari [`enigmatic-brook-59106.herokuapp.com`](https://enigmatic-brook-59106.herokuapp.com/)
 
-	GET		/api/disease
-	GET		/api/disease/:id
-	POST	/api/disease
-	DELETE	/api/disease/:id
+## Daftar endpoint
+```
+GET    /
+GET    /api
 
-	GET		/api/prediction
-	GET		/api/prediction/:id
-	POST	/api/prediction
-	DELETE	/api/prediction/:id
+GET    /api/disease
+GET    /api/disease/:id
+POST   /api/disease
+DELETE /api/disease/:id
+
+GET    /api/prediction
+GET    /api/prediction/:id
+POST   /api/prediction
+DELETE /api/prediction/:id
+```

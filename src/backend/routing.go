@@ -38,7 +38,7 @@ func GetDiseaseById(c *gin.Context) {
 
 func GetPrediction(c *gin.Context) {
 	// Get all predictions from the database.
-	rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, dna_sequence, disease_id, disease_name, result, accuracy FROM prediction_view")
+	rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id")
 	getError(c, err)
 	defer rows.Close()
 	// Iterate through the predictions and create a JSON array.
@@ -58,7 +58,7 @@ func GetPredictionById(c *gin.Context) {
 	id := c.Params.ByName("id")
 	// Get the prediction from the database.
 	var prediction Prediction
-	err := db.QueryRow("SELECT prediction_id, prediction_date, patient_name, dna_sequence, disease_id, disease_name, result, accuracy FROM prediction_view WHERE prediction_id = ?", id).Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+	err := db.QueryRow("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id and prediction.prediction_id = ?", id).Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
 	getError(c, err)
 	// Return the prediction.
 	c.JSON(200, prediction)
