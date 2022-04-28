@@ -64,7 +64,7 @@ func GetPredictionById(c *gin.Context) {
 	c.JSON(200, prediction)
 }
 
-func InsertDisease(c *gin.Context) {
+func PostDisease(c *gin.Context) {
 	// Capture the disease from the request body.
 	var newDisease Disease
 	err := c.Bind(&newDisease)
@@ -85,7 +85,7 @@ func InsertDisease(c *gin.Context) {
 	c.JSON(200, gin.H{"disease_name": diseaseName, "dna_sequence": dnaSequence})
 }
 
-func InsertPrediction(c *gin.Context) {
+func PostPrediction(c *gin.Context) {
 	// Capture the prediction from the request body.
 	var newPrediction Prediction
 	err := c.Bind(&newPrediction)
