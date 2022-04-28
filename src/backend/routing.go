@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"database/sql"
 )
 
 func TestAPI(c *gin.Context) {
@@ -37,20 +38,48 @@ func GetDiseaseById(c *gin.Context) {
 }
 
 func GetPrediction(c *gin.Context) {
-	// Get all predictions from the database.
-	rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id")
-	getError(c, err)
-	defer rows.Close()
-	// Iterate through the predictions and create a JSON array.
-	var predictions []Prediction
-	for rows.Next() {
-		var prediction Prediction
-		err := rows.Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+	q := c.Query("q")
+	if q != "" {
+		// Parse query
+		date := parseDate(q)
+		word := parseWord(q)
+		var rows *sql.Rows
+		var err error
+		if date != "" && word != "" {
+			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id and prediction_date = ? and patient_name LIKE ?", date, "%"+word+"%")
+		} else if date != "" {
+			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND prediction_date = ?", date)
+		} else if word != "" {
+			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND patient_name LIKE ?", "%"+word+"%")
+		}
 		getError(c, err)
-		predictions = append(predictions, prediction)
+		defer rows.Close()
+		// Iterate through the predictions and create a JSON array.
+		var predictions []Prediction
+		for rows.Next() {
+			var prediction Prediction
+			err := rows.Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+			getError(c, err)
+			predictions = append(predictions, prediction)
+		}
+		// Return the predictions.
+		c.JSON(200, gin.H{"predictions": predictions})
+	} else {
+		// Get all predictions from the database.
+		rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id")
+		getError(c, err)
+		defer rows.Close()
+		// Iterate through the predictions and create a JSON array.
+		var predictions []Prediction
+		for rows.Next() {
+			var prediction Prediction
+			err := rows.Scan(&prediction.ID, &prediction.Date, &prediction.PatientName, &prediction.DNASequence, &prediction.DiseaseId, &prediction.DiseaseName, &prediction.Result, &prediction.Accuracy)
+			getError(c, err)
+			predictions = append(predictions, prediction)
+		}
+		// Return the predictions.
+		c.JSON(200, predictions)
 	}
-	// Return the predictions.
-	c.JSON(200, predictions)
 }
 
 func GetPredictionById(c *gin.Context) {
