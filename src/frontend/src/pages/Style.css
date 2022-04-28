@@ -175,3 +175,12 @@ p {
   padding-bottom: 1%;
   background-color: #e9efc0;
 }
+
+select {
+  width: 75%;
+  font-size: 20px;
+  padding: 4%;
+}
+table {
+  width: 100%;
+}

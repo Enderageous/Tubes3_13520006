@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-
+import { Box } from "@mui/material";
 class Search extends React.Component {
   state = {
     diseases: [],
@@ -18,7 +18,8 @@ class Search extends React.Component {
         const names = res.data;
         const results = res.data;
         this.setState({ diseases, dates, names, results });
-      });
+      })
+      .catch((error) => console.log(error));
   }
 
   setSearch(event) {
@@ -43,12 +44,14 @@ class Search extends React.Component {
             }
           </form>
         </div>
-        <table className="searchResult">
+        <table>
           {this.state.diseases.map((disease) => (
-            <tr key={disease.id}>
-              {disease.date} - {disease.patient_name} - {disease.disease_name} -{" "}
-              {disease.result ? "True" : "False"}
-            </tr>
+            <Box className="searchResult">
+              <tr key={disease.id}>
+                {disease.date} - {disease.patient_name} - {disease.disease_name}
+                - {disease.result ? "True" : "False"}
+              </tr>
+            </Box>
           ))}
         </table>
       </div>
