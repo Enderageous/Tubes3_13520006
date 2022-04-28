@@ -96,11 +96,18 @@ func PostPrediction(c *gin.Context) {
 	newPrediction.DNASequence, err = readFile(file)
 	logError(err)
 
-	// Capture the prediction date, patient name, disease name, result and accuracy.
+	// Capture the prediction date, patient name and disease name
 	patientName := newPrediction.PatientName
 	diseaseId := newPrediction.DiseaseId
+
+	// Find the disease DNA sequence from the database.
+	diseaseDNARow, err := db.Query("SELECT dna_sequence FROM disease WHERE disease_id = ?", diseaseId)
+	getError(c, err)
+	defer diseaseDNARow.Close()
+	var diseaseDNASequence string
+	
 	dnaSequence := newPrediction.DNASequence
-	result := 1   // TODO: ganti sesuai algo strmatch
+	result := mainKMP(dnaSequence, diseaseDNASequence)
 	accuracy := 1 // TODO: ganti sesuai algo strmatch
 	// Insert the prediction into the database.
 	_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
