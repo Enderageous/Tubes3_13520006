@@ -2,20 +2,18 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"regexp"
 )
 
 // Check apakah input file hanya memiliki A, G, C, T, dan tidak ada spasi
-func isAGCT(s []byte) bool{
+func isAGCT(s string) bool{
 	var result = regexp.MustCompile(`^[ACGT]+$`).MatchString
 
-	return (result(string(s)))
+	return (result(s))
 }
 
 // Algoritma Utama KMP
-func KMP(input []byte, disease []byte) bool {
+func KMP(input string, disease string) bool {
 	border := computeBorder(disease)
 	i := 0
 	j := 0
@@ -42,7 +40,7 @@ func KMP(input []byte, disease []byte) bool {
 }
 
 // Fungsi untuk menghitung border function
-func computeBorder(input []byte) []int {
+func computeBorder(input string) []int {
 	var border = make([]int, len(input))
 	i := 1
 	j := 0
@@ -65,20 +63,11 @@ func computeBorder(input []byte) []int {
 }
 
 // Fungsi untuk menggunakan Algoritma KMP
-func mainKMP(pathInput string, pathDisease string) bool {
+func mainKMP(Input string, Disease string) bool {
 	var result bool
-	readInput, err := ioutil.ReadFile(pathInput)
-    if err != nil {
-        log.Fatalf("unable to read file: %v", err)
-    }
 
-	readDisease, err := ioutil.ReadFile(pathDisease)
-    if err != nil {
-        log.Fatalf("unable to read file: %v", err)
-    }
-
-	if isAGCT(readInput) && isAGCT(readDisease) {
-		result = KMP(readInput, readDisease)
+	if isAGCT(Input) && isAGCT(Disease) {
+		result = KMP(Input, Disease)
 	} else {
 		fmt.Println("Input format is not A, C, G, T, or it has spaces")
 	}
