@@ -103,15 +103,19 @@ func PostDisease(c *gin.Context) {
 
 	newDisease.DNASequence, err = readFile(file)
 	logError(err)
-	
-	// Capture the disease name and dna sequence.
-	diseaseName := newDisease.Name
-	dnaSequence := newDisease.DNASequence
-	// Insert the disease into the database.
-	_, err = db.Exec("INSERT INTO disease (disease_name, dna_sequence) VALUES (?, ?)", diseaseName, dnaSequence)
-	getError(c, err)
-	// Return the disease.
-	c.JSON(200, gin.H{"disease_name": diseaseName, "dna_sequence": dnaSequence})
+
+	if (isAGCT(newDisease.DNASequence)) {
+		// Capture the disease name and dna sequence.
+		diseaseName := newDisease.Name
+		dnaSequence := newDisease.DNASequence
+		// Insert the disease into the database.
+		_, err = db.Exec("INSERT INTO disease (disease_name, dna_sequence) VALUES (?, ?)", diseaseName, dnaSequence)
+		getError(c, err)
+		// Return the disease.
+		c.JSON(200, gin.H{"disease_name": diseaseName, "dna_sequence": dnaSequence})
+	} else {
+		c.JSON(400, gin.H{"error": "Invalid DNA sequence"})
+	}
 }
 
 func PostPrediction(c *gin.Context) {
@@ -125,24 +129,28 @@ func PostPrediction(c *gin.Context) {
 	newPrediction.DNASequence, err = readFile(file)
 	logError(err)
 
-	// Capture the prediction date, patient name and disease name
-	patientName := newPrediction.PatientName
-	diseaseId := newPrediction.DiseaseId
+	if (isAGCT(newPrediction.DNASequence)) {
+		// Capture the prediction date, patient name and disease name
+		patientName := newPrediction.PatientName
+		diseaseId := newPrediction.DiseaseId
 
-	// Find the disease DNA sequence from the database.
-	diseaseDNARow, err := db.Query("SELECT dna_sequence FROM disease WHERE disease_id = ?", diseaseId)
-	getError(c, err)
-	defer diseaseDNARow.Close()
-	var diseaseDNASequence string
-	
-	dnaSequence := newPrediction.DNASequence
-	result := mainKMP(dnaSequence, diseaseDNASequence)
-	accuracy := 1 // TODO: ganti sesuai algo strmatch
-	// Insert the prediction into the database.
-	_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
-	getError(c, err)
-	// Return the prediction.
-	c.JSON(200, gin.H{"patient_name": patientName, "disease_id": diseaseId, "result": result, "accuracy": accuracy})
+		// Find the disease DNA sequence from the database.
+		diseaseDNARow, err := db.Query("SELECT dna_sequence FROM disease WHERE disease_id = ?", diseaseId)
+		getError(c, err)
+		defer diseaseDNARow.Close()
+		var diseaseDNASequence string
+		
+		dnaSequence := newPrediction.DNASequence
+		result := mainKMP(dnaSequence, diseaseDNASequence)
+		accuracy := 1 // TODO: ganti sesuai algo strmatch
+		// Insert the prediction into the database.
+		_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
+		getError(c, err)
+		// Return the prediction.
+		c.JSON(200, gin.H{"patient_name": patientName, "disease_id": diseaseId, "result": result, "accuracy": accuracy})
+	} else {
+		c.JSON(400, gin.H{"error": "Invalid DNA sequence"})
+	}
 }
 
 func DeleteDiseaseById(c *gin.Context) {
