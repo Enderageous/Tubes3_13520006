@@ -11,7 +11,6 @@ const TesDNA = () => {
   const [dnaFiles, setDnaFiles] = useState(null);
   const [date, setdate] = useState("");
   const [diseaseName, setDiseaseName] = useState("");
-  const [accuracy, setAccuracy] = useState("");
   const [result, setResult] = useState("");
 
   const onChange = (e) => {
@@ -41,7 +40,6 @@ const TesDNA = () => {
         setdate(res.data.date);
         setPatientName(res.data.patient_name);
         setDiseaseName(res.data.disease_name);
-        setAccuracy(res.data.accuracy);
         setResult(res.data.result);
       })
       .catch((error) => console.log(error));
@@ -115,9 +113,9 @@ const TesDNA = () => {
           <div className="onecolumn">
             <p>
               <h3 className="Hasil">Hasil Test</h3>
-              {accuracy === "" ? null : (
+              {result === "" ? null : (
                 <>
-                  {formatDate(date)} - {patientName} - {diseaseName}- {accuracy * 100}% -{" "}
+                  {formatDate(date)} - {patientName} - {diseaseName} -{" "}
                   {result ? "True" : "False"}
                 </>
               )}
