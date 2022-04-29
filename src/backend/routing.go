@@ -63,7 +63,7 @@ func GetPrediction(c *gin.Context) {
 			predictions = append(predictions, prediction)
 		}
 		// Return the predictions.
-		c.JSON(200, gin.H{"predictions": predictions})
+		c.JSON(200, predictions)
 	} else {
 		// Get all predictions from the database.
 		rows, err := db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id")
