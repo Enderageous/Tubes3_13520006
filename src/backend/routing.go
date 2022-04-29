@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"database/sql"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestAPI(c *gin.Context) {
@@ -139,9 +140,14 @@ func PostPrediction(c *gin.Context) {
 		getError(c, err)
 		defer diseaseDNARow.Close()
 		var diseaseDNASequence string
-		
+		for diseaseDNARow.Next() {
+			err := diseaseDNARow.Scan(&diseaseDNASequence)
+			getError(c, err)
+		}
+
 		dnaSequence := newPrediction.DNASequence
-		result := mainKMP(dnaSequence, diseaseDNASequence)
+		newPrediction.Result = mainKMP(dnaSequence, diseaseDNASequence)
+		result := newPrediction.Result
 		accuracy := 1 // TODO: ganti sesuai algo strmatch
 		// Insert the prediction into the database.
 		_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
