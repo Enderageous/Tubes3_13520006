@@ -56,10 +56,11 @@ func findMonthNumberFromName(monthName string) string {
 
 func parseDate(s string) (string, string) {
 	var fs string
-	var format = regexp.MustCompile(`\d{4}\W\d{2}\W\d{2}|\d{2}\W\d{2}\W\d{4}|\d{2}\s\w+\s\d{4}`)
+	var format = regexp.MustCompile(`\d{4}\W\d{2}\W\d{2}|\d{2}\W\d{2}\W\d{4}|\d{2}\s\w+\s\d{4}|\d\s\w+\s\d{4}`)
 	var format1 = regexp.MustCompile(`\d{4}\W\d{2}\W\d{2}`) // YYYY-MM-DD
 	var format2 = regexp.MustCompile(`\d{2}\W\d{2}\W\d{4}`) // DD-MM-YYYY
 	var format3 = regexp.MustCompile(`\d{2}\s\w+\s\d{4}`) // DD MONTH YYYY
+	var format4 = regexp.MustCompile(`\d\s\w+\s\d{4}`) // D MONTH YYYY
 	result := format.FindString(s)
 	if result != "" {
 		fs = format.ReplaceAllString(s, "")
@@ -67,19 +68,22 @@ func parseDate(s string) (string, string) {
 			result = format1.FindString(result)
 			// Change result format to YYYY-MM-DD
 			result = result[0:4] + "-" + result[4:6] + "-" + result[6:8]
-			return result, fs
 		} else if format2.FindString(result) != "" {
 			result = format2.FindString(result)
 			// Change result format from DD-MM-YYYY to YYYY-MM-DD
 			result = result[6:10] + "-" + result[3:5] + "-" + result[0:2]
-			return result, fs
 		} else if format3.FindString(result) != "" {
 			result = format3.FindString(result)
 			// Find month name
 			monthName := regexp.MustCompile(`[a-zA-Z]+`).FindString(result)
 			// Change result format from DD MONTH YYYY to YYYY-MM-DD
 			result = result[len(result)-4:] + "-" + findMonthNumberFromName(strings.ToLower(monthName)) + "-" + result[0:2]
-			return result, fs
+		} else if format4.FindString(result) != "" {
+			result = format4.FindString(result)
+			// Find month name
+			monthName := regexp.MustCompile(`[a-zA-Z]+`).FindString(result)
+			// Change result format from D MONTH YYYY to YYYY-MM-DD
+			result = result[len(result)-4:] + "-" + findMonthNumberFromName(strings.ToLower(monthName)) + "-0" + result[0:1]
 		}
 		return result, fs
 	}
