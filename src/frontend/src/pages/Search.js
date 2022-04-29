@@ -30,15 +30,20 @@ const Search = () => {
   const [results, setResults] = useState([]);
 
   const handleChange = (e) => {
-    setSearch(e)
-  }
+    setSearch(e.target.value);
+    console.log(search)
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await axios(
         `https://enigmatic-brook-59106.herokuapp.com/api/prediction?q=${search}`
       );
-      setResults(res.data);
+      if (res.data != null) {
+        setResults(res.data);
+      } else {
+        setResults([]);
+      }
     };
     fetchData();
   }, [search]);
@@ -52,10 +57,11 @@ const Search = () => {
                 type="text"
                 name="penyakit"
                 placeholder="Search..."
+                // onChange={(e) => handleChange(e)}
                 onKeyDown={
                   (e) => {
                     if (e.key === "Enter") {
-                      setSearch(e.target.value)
+                      handleChange(e);
                     }
                   }
                 }
