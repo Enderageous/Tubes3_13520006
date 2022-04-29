@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@mui/material";
+import { formatDate } from "../utils/formatDate";
 
 const TesDNA = () => {
   const [diseases, setDiseases] = useState([]);
@@ -116,7 +117,7 @@ const TesDNA = () => {
               <h3 className="Hasil">Hasil Test</h3>
               {accuracy === "" ? null : (
                 <>
-                  {date} - {patientName} - {diseaseName}- {accuracy * 100}% -{" "}
+                  {formatDate(date)} - {patientName} - {diseaseName}- {accuracy * 100}% -{" "}
                   {result ? "True" : "False"}
                 </>
               )}
