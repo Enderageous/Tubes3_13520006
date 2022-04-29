@@ -43,7 +43,6 @@ func GetPrediction(c *gin.Context) {
 		// Parse params
 		date, q := parseDate(q)
 		word := parseWord(q)
-		c.JSON(200, gin.H{"date": date, "word": word})
 		var rows *sql.Rows
 		var err error
 		if date != "" && word != "" {
