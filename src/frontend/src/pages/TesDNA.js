@@ -113,12 +113,6 @@ const TesDNA = () => {
           </div>
           <div className="onecolumn">
             <p>
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
-              <br />
               <h3 className="Hasil">Hasil Test</h3>
               {accuracy === "" ? null : (
                 <>
