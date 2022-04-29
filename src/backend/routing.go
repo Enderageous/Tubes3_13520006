@@ -40,17 +40,18 @@ func GetDiseaseById(c *gin.Context) {
 func GetPrediction(c *gin.Context) {
 	q := c.Query("q")
 	if q != "" {
-		// Parse query
-		date := parseDate(q)
+		// Parse params
+		date, q := parseDate(q)
 		word := parseWord(q)
+		c.JSON(200, gin.H{"date": date, "word": word})
 		var rows *sql.Rows
 		var err error
 		if date != "" && word != "" {
-			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id and prediction_date = ? and patient_name LIKE ?", date, "%"+word+"%")
+			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id and prediction_date = ? and disease_name LIKE ?", date, "%"+word+"%")
 		} else if date != "" {
 			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND prediction_date = ?", date)
 		} else if word != "" {
-			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND patient_name LIKE ?", "%"+word+"%")
+			rows, err = db.Query("SELECT prediction_id, prediction_date, patient_name, prediction.dna_sequence, prediction.disease_id, disease_name, result, accuracy FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND disease_name LIKE ?", "%"+word+"%")
 		}
 		getError(c, err)
 		defer rows.Close()
