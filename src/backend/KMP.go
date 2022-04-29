@@ -40,14 +40,14 @@ func KMP(input string, disease string) bool {
 }
 
 // Fungsi untuk menghitung border function
-func computeBorder(input string) []int {
-	var border = make([]int, len(input))
+func computeBorder(disease string) []int {
+	var border = make([]int, len(disease))
 	i := 1
 	j := 0
 	border[0] = 0
 
-	for i < len(input) {
-		if input[i] == input[j] {
+	for i < len(disease) {
+		if disease[i] == disease[j] {
 			border[i] = j + 1
 			i++
 			j++
