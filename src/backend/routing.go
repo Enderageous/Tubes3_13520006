@@ -148,12 +148,11 @@ func PostPrediction(c *gin.Context) {
 		getError(c, err)
 
 		// get ID of recently inserted prediction
-		var predictionId int
-		err = db.QueryRow("SELECT prediction_id FROM prediction WHERE patient_name = ? AND dna_sequence = ? AND disease_id = ?", patientName, dnaSequence, diseaseId).Scan(&predictionId)
+		err = db.QueryRow("SELECT prediction_id, prediction_date, disease_name FROM prediction, disease WHERE prediction.disease_id=disease.disease_id AND patient_name = ? AND prediction.dna_sequence = ? AND prediction.disease_id = ?", patientName, dnaSequence, diseaseId).Scan(&newPrediction.ID, &newPrediction.Date, &newPrediction.DiseaseName)
 		getError(c, err)
 
 		// Return the prediction.
-		c.JSON(200, gin.H{"id": predictionId})
+		c.JSON(200, newPrediction)
 	} else {
 		c.JSON(400, gin.H{"error": "Invalid DNA sequence"})
 	}
