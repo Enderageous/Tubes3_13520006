@@ -8,6 +8,10 @@ const TesDNA = () => {
   const [diseaseId, setDiseasesId] = useState("");
   const [fileChoosen, setFileChoosen] = useState(false);
   const [dnaFiles, setDnaFiles] = useState(null);
+  const [date, setdate] = useState("");
+  const [diseaseName, setDiseaseName] = useState("");
+  const [accuracy, setAccuracy] = useState("");
+  const [result, setResult] = useState("");
 
   const onChange = (e) => {
     if (e.target.files[0]) {
@@ -31,7 +35,14 @@ const TesDNA = () => {
       headers: { "Content-Type": "multipart/form-data" },
       method: "post",
     })
-      .then((res) => alert("Data prediksi berhasil ditambahkan"))
+      .then((res) => {
+        alert("Data prediksi berhasil ditambahkan");
+        setdate(res.data.date);
+        setPatientName(res.data.patient_name);
+        setDiseaseName(res.data.disease_name);
+        setAccuracy(res.data.accuracy);
+        setResult(res.data.result);
+      })
       .catch((error) => console.log(error));
   };
   useEffect(() => {
@@ -80,6 +91,7 @@ const TesDNA = () => {
                 hidden
               ></input>
             </Button>
+
             <br></br>
             <br />
             <button className="submitButton1" type="submit" color="green">
@@ -98,6 +110,23 @@ const TesDNA = () => {
                 </option>
               ))}
             </select>
+          </div>
+          <div className="onecolumn">
+            <p>
+              <br />
+              <br />
+              <br />
+              <br />
+              <br />
+              <br />
+              <h3 className="Hasil">Hasil Test</h3>
+              {accuracy === "" ? null : (
+                <>
+                  {date} - {patientName} - {diseaseName}- {accuracy * 100}% -{" "}
+                  {result ? "True" : "False"}
+                </>
+              )}
+            </p>
           </div>
         </div>
       </form>
