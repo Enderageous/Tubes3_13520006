@@ -147,8 +147,9 @@ func PostPrediction(c *gin.Context) {
 
 		dnaSequence := newPrediction.DNASequence
 		newPrediction.Result = mainKMP(dnaSequence, diseaseDNASequence)
+		newPrediction.Accuracy = 1 // accuracy is always 1 for now
 		result := newPrediction.Result
-		accuracy := 1 // TODO: ganti sesuai algo strmatch
+		accuracy := newPrediction.Accuracy
 		// Insert the prediction into the database.
 		_, err = db.Exec("INSERT INTO prediction (prediction_date, patient_name, dna_sequence, disease_id, result, accuracy) VALUES (NOW(), ?, ?, ?, ?, ?)", patientName, dnaSequence, diseaseId, result, accuracy)
 		getError(c, err)
